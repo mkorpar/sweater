@@ -19,6 +19,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/config_ex.hpp>
+#include <boost/core/no_exceptions_support.hpp>
 
 #include <algorithm>
 #include <cstdint>
@@ -183,7 +184,7 @@ public:
             [promise = std::move( promise ), work = std::forward<F>( work )]
             () mutable noexcept
             {
-                try
+                BOOST_TRY
                 {
                     if constexpr ( std::is_same_v<result_t, void> )
                     {
@@ -195,10 +196,11 @@ public:
                         promise.set_value( work() );
                     }
                 }
-                catch ( ... )
+                BOOST_CATCH ( ... )
                 {
                     promise.set_exception( std::current_exception() );
                 }
+                BOOST_CATCH_END
             }
         );
         return future;

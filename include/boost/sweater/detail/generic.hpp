@@ -25,6 +25,7 @@
 #include <boost/container/static_vector.hpp>
 #include <boost/functionoid/functionoid.hpp>
 #include <boost/range/iterator_range_core.hpp>
+#include <boost/core/no_exceptions_support.hpp>
 
 #include <atomic>
 #include <cstdint>
@@ -738,7 +739,7 @@ public:
 
             void operator()() noexcept
             {
-                try
+                BOOST_TRY
                 {
                 #if BOOST_WORKAROUND( BOOST_MSVC, BOOST_TESTED_AT( 1903 ) )
                     set_promise( promise, work );
@@ -754,10 +755,11 @@ public:
                     }
                 #endif // MSVC constexpr compilation failure workaround
                 }
-                catch ( ... )
+                BOOST_CATCH ( ... )
                 {
                     promise.set_exception( std::current_exception() );
                 }
+                BOOST_CATCH_END
             }
 
             Functor   work   ;
