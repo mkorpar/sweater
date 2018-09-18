@@ -450,11 +450,13 @@ private:
             auto const error( thread_impl::create( start_routine, arg ) );
             if ( BOOST_UNLIKELY( error ) )
             {
+            #if !(defined BOOST_NO_EXCEPTIONS)
             #if 0 // disabled - avoid the overhead of (at least) <system_error>
                 throw std::system_error( std::error_code( error, std::system_category() ), "Thread creation failed" );
             #else
                 throw std::runtime_error( "Not enough resources to create a new thread" );
             #endif // 0 // disabled - avoid the overhead of <system_error>
+            #endif
             }
         }
     }; // class thread
